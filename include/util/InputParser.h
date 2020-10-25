@@ -12,13 +12,6 @@ namespace vector
         class InputParser
         {
             public:
-            
-            /**
-             * @brief Delete default constructor
-             * 
-             */
-                InputParser() = delete;
-
                 /**
                  * @brief Destroy the Input Parser object
                  * 
@@ -32,6 +25,13 @@ namespace vector
                  * @return Command  command resulting from parsing the input string
                  */
                 static Command Parse(const std::string& input);
+
+                // Delete default constructor, copy and move constructors
+                InputParser() = delete;
+                InputParser(const InputParser& other) = delete;
+                InputParser& operator=(const InputParser& other) = delete;
+                InputParser(InputParser&& other) = delete;
+                InputParser& operator=(InputParser&& other) = delete;
 
             private:
 
