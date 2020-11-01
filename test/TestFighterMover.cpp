@@ -20,7 +20,9 @@ TEST(TestFigherMover, TestInitialPosValid)
 
     vector::sim::FighterMover mover;
 
-    mover.SetInitialPosition(initialPos);
+    bool valid = mover.SetInitialPosition(initialPos);
+
+    EXPECT_TRUE(valid);
 
     EXPECT_EQ(mover.GetPositionalData().heading, 0);
     EXPECT_EQ(mover.GetPositionalData().xCoord, 0);
