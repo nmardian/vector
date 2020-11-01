@@ -12,4 +12,5 @@ target_link_libraries(TestVector
 
 target_sources(TestVector PUBLIC
         TestInputParser.cpp
+        TestFighterMover.cpp
 )      
