@@ -7,8 +7,10 @@ namespace vector
 {
     namespace sim
     {
-        static const unsigned short HEADING_MIN = 0;
-        static const unsigned short HEADING_MAX = 359;
+        static const angle HEADING_MIN = 0;
+        static const angle HEADING_MAX = 359;
+        static const angle HEADING_FULL_CIRCLE = 360;
+        static const angle HEADING_HALF_CIRCLE = 180;
         static const speed SPEED_MIN = 0.0;
         static const speed SPEED_MAX = 838.0;
         static const angle DEFAULT_TURN_RATE = 5;

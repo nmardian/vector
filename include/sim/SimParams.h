@@ -9,11 +9,9 @@ namespace vector
     namespace sim
     {
         // TODO: These should be read in from config file
-        static const speed BLUE_FIGHTER_SPEED_MAX = 838;
-        static const angle BLUE_FIGHTER_TURN_RATE = 10;
-
-        static const speed RED_FIGHTER_SPEED_MAX = 838;
-        static const angle RED_FIGHTER_TURN_RATE = 10;
+        static const speed FIGHTER_SPEED_MAX = 838;
+        static const angle FIGHTER_TURN_RATE = 10;
+        static const speed FIGHTER_ACCL_DCCL = 5;
 
         struct MoverParams
         {

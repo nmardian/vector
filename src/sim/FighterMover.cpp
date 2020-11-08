@@ -2,12 +2,14 @@
 #include "sim/SimConstants.h"
 #include "util/MathUtil.h"
 
+#include <algorithm>
+
 namespace vector
 {
     namespace sim
     {
         FighterMover::FighterMover(MoverParams performanceValues)
-            : m_InertialData({0, 0, 0, 0})
+            : m_InertialData()
             , m_PerformanceValues(performanceValues)
             , m_DesiredHeading(0)
         {
@@ -17,31 +19,56 @@ namespace vector
         {
             std::scoped_lock<std::mutex> lock(m_PositionMutex);
 
-            vector::sim::InertialData newInertial = m_InertialData;
-            if(m_InertialData.curHeading == m_DesiredHeading)
+            InertialData newInertial = m_InertialData;
+            if(m_InertialData.curHeading != m_DesiredHeading)
             {
-                newInertial.xCoord = m_InertialData.xCoord + vector::util::MathUtil::GetXComponentOfSpeed(m_InertialData.curSpeed, m_InertialData.curHeading);
-                newInertial.yCoord = m_InertialData.yCoord + vector::util::MathUtil::GetYComponentOfSpeed(m_InertialData.curSpeed, m_InertialData.curHeading);
+                angle newHeading = m_InertialData.curHeading;
+
+                // turn right
+                if( (HEADING_FULL_CIRCLE + m_InertialData.curHeading - m_DesiredHeading) > HEADING_HALF_CIRCLE)
+                {
+                    newHeading = (HEADING_FULL_CIRCLE + m_InertialData.curHeading + FIGHTER_TURN_RATE) % HEADING_FULL_CIRCLE;
+                }
+                // turn left
+                else
+                {
+                    newHeading = (HEADING_FULL_CIRCLE + m_InertialData.curHeading - FIGHTER_TURN_RATE) % HEADING_FULL_CIRCLE;
+                }
+
+                newInertial.curHeading = newHeading;
+                
+                // turn decreases speed
+                newInertial.curSpeed = std::max(SPEED_MIN, (m_InertialData.curSpeed - FIGHTER_ACCL_DCCL));
             }
             else
             {
-                
+                // flying straight increases speed
+                newInertial.curSpeed = std::min(SPEED_MAX, (m_InertialData.curSpeed + FIGHTER_ACCL_DCCL));
             }
+
+            newInertial.xCoord = m_InertialData.xCoord + vector::util::MathUtil::GetXComponentOfSpeed(m_InertialData.curSpeed, m_InertialData.curHeading);
+            newInertial.yCoord = m_InertialData.yCoord + vector::util::MathUtil::GetYComponentOfSpeed(m_InertialData.curSpeed, m_InertialData.curHeading);
 
             m_InertialData = newInertial;
             
         }
 
-        void FighterMover::SetNewHeading(const angle newHeadingDegrees)
+        bool FighterMover::SetNewHeading(const angle newHeadingDegrees)
         {
-            std::scoped_lock<std::mutex> lock(m_PositionMutex);
+            if(newHeadingDegrees >= HEADING_MIN && newHeadingDegrees <= HEADING_MAX)
+            {
+                std::scoped_lock<std::mutex> lock(m_PositionMutex);
+                m_DesiredHeading = newHeadingDegrees;
+                return true;
+            }
+
+            return false;
         }
 
         bool FighterMover::SetInitialInertialData(const InertialData initialInertialData)
         {
-            // TODO: check for max x and y coords?
             if(initialInertialData.curHeading >= HEADING_MIN && initialInertialData.curHeading <= HEADING_MAX && 
-                initialInertialData.curSpeed >= SPEED_MIN && initialInertialData.curSpeed <= BLUE_FIGHTER_SPEED_MAX &&
+                initialInertialData.curSpeed >= SPEED_MIN && initialInertialData.curSpeed <= FIGHTER_SPEED_MAX &&
                 initialInertialData.xCoord >= X_COORD_MIN && initialInertialData.yCoord >= Y_COORD_MIN &&
                 initialInertialData.xCoord <= X_COORD_MAX && initialInertialData.yCoord <= Y_COORD_MAX)
             {

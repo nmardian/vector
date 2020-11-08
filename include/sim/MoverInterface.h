@@ -21,8 +21,9 @@ namespace vector
                  *          The Mover will slew to the new heading based on its turn speed.
                  * 
                  * @param newHeading The new heading the Mover will slew to
+                 * @return true if the heading was successfully updated, false otherwise
                  */
-                virtual void SetNewHeading(const angle newHeadingDegrees) = 0;
+                virtual bool SetNewHeading(const angle newHeadingDegrees) = 0;
 
                 /**
                  * @brief Set the initial position of this Mover

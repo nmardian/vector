@@ -14,7 +14,28 @@ namespace vector
         class FighterMover : MoverInterface
         {
             public:
+                /**
+                 * @brief Constructor
+                 * 
+                 * @param performanceValues Performance characteristics of this FighterMover
+                 */
                 FighterMover(MoverParams performanceValues);
+
+                FighterMover(const FighterMover&) = delete;
+                FighterMover& operator=(const FighterMover&) = delete;
+
+                /**
+                 * @brief Default move constructor
+                 * 
+                 */
+                FighterMover(FighterMover&&) = delete;
+
+                /**
+                 * @brief Default move operator
+                 * 
+                 * @return FighterMover& 
+                 */
+                FighterMover& operator=(FighterMover&&) = delete;
 
                 /**
                  * @brief Default Destructor
@@ -24,17 +45,14 @@ namespace vector
 
                 void Move();
 
-                void SetNewHeading(const angle newHeadingDegrees);
+                bool SetNewHeading(const angle newHeadingDegrees);
 
                 bool SetInitialInertialData(const InertialData initialInertialData) override;
 
                 InertialData GetInertialData() const override;
 
-                FighterMover() = delete;
-                FighterMover(const FighterMover&) = delete;
-                FighterMover& operator=(const FighterMover&) = delete;
-                FighterMover(FighterMover&&) = delete;
-                FighterMover& operator=(FighterMover&&) = delete;
+                FighterMover() = default;
+                
 
             private:
                 InertialData m_InertialData;
