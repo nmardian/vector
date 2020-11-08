@@ -1,7 +1,7 @@
 #ifndef MOVER_INTERFACE_h
 #define MOVER_INTERFACE_h
 
-#include "PositionalData.h"
+#include "InertialData.h"
 
 namespace vector
 {
@@ -22,7 +22,7 @@ namespace vector
                  * 
                  * @param newHeading The new heading the Mover will slew to
                  */
-                virtual void SetNewHeading(const unsigned short newHeadingDegrees) = 0;
+                virtual void SetNewHeading(const angle newHeadingDegrees) = 0;
 
                 /**
                  * @brief Set the initial position of this Mover
@@ -31,14 +31,14 @@ namespace vector
                  * @return true if the initial position is valid
                  * @return false if the initial position is not valid
                  */
-                virtual bool SetInitialPosition(const PositionalData initialPosition) = 0;
+                virtual bool SetInitialInertialData(const InertialData initialInertialData) = 0;
 
                 /**
                  * @brief Get the PositionalData for this Mover
                  * 
                  * @return PositionalData The PositionalData of this Mover
                  */
-                virtual PositionalData GetPositionalData() const = 0;
+                virtual InertialData GetInertialData() const = 0;
         };
     }
 }

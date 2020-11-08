@@ -3,6 +3,8 @@
 
 #include "MoverInterface.h"
 
+#include "SimTypes.h"
+#include "SimParams.h"
 #include <mutex>
 
 namespace vector
@@ -12,12 +14,7 @@ namespace vector
         class FighterMover : MoverInterface
         {
             public:
-                
-                /**
-                 * @brief Default constructor
-                 * 
-                 */
-                FighterMover::FighterMover() = default;
+                FighterMover(MoverParams performanceValues);
 
                 /**
                  * @brief Default Destructor
@@ -27,15 +24,25 @@ namespace vector
 
                 void Move();
 
-                void SetNewHeading(const unsigned short newHeadingDegrees);
+                void SetNewHeading(const angle newHeadingDegrees);
 
-                bool SetInitialPosition(const PositionalData initialPosition) override;
+                bool SetInitialInertialData(const InertialData initialInertialData) override;
 
-                PositionalData GetPositionalData() const override;
+                InertialData GetInertialData() const override;
+
+                FighterMover() = delete;
+                FighterMover(const FighterMover&) = delete;
+                FighterMover& operator=(const FighterMover&) = delete;
+                FighterMover(FighterMover&&) = delete;
+                FighterMover& operator=(FighterMover&&) = delete;
 
             private:
-                PositionalData m_Position;
-                mutable std::mutex m_PositionMutex;    
+                InertialData m_InertialData;
+                mutable std::mutex m_PositionMutex;
+
+                MoverParams m_PerformanceValues;
+
+                angle m_DesiredHeading;
         };
     }
 }
