@@ -25,6 +25,8 @@ namespace vector
         struct Command
         {
             COMMAND_TYPE command{COMMAND_TYPE::UNK};
+            std::string subject;
+            std::string object;
         };
     } // namespace util
 } // namespace vector

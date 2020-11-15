@@ -4,24 +4,32 @@
 
 TEST(TestInputParser, TestParseCommand)
 {
-    std::string vectorString = "vector";
-    std::string identifyString = "identify";
-    std::string aquireString = "aquire";
-    std::string launchString = "launch";
+    std::string vectorString = "vector brot 123";
+    std::string identifyString = "identify brot marm";
+    std::string aquireString = "aquire brot marm";
+    std::string launchString = "launch brot marm";
 
     vector::util::Command result;
 
     result = vector::util::InputParser::Parse(vectorString);
     EXPECT_EQ(vector::util::COMMAND_TYPE::VECTOR, result.command);
+    EXPECT_EQ("brot", result.subject);
+    EXPECT_EQ("123", result.object);
 
     result = vector::util::InputParser::Parse(identifyString);
     EXPECT_EQ(vector::util::COMMAND_TYPE::IDENTIFY, result.command);
+    EXPECT_EQ("brot", result.subject);
+    EXPECT_EQ("marm", result.object);
 
     result = vector::util::InputParser::Parse(aquireString);
     EXPECT_EQ(vector::util::COMMAND_TYPE::AQUIRE, result.command);
+    EXPECT_EQ("brot", result.subject);
+    EXPECT_EQ("marm", result.object);
 
     result = vector::util::InputParser::Parse(launchString);
     EXPECT_EQ(vector::util::COMMAND_TYPE::LAUNCH, result.command);
+    EXPECT_EQ("brot", result.subject);
+    EXPECT_EQ("marm", result.object);
 }
 
 TEST(TestInputParser, TestTrim)

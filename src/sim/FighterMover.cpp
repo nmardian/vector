@@ -15,6 +15,16 @@ namespace vector
         {
         }
 
+        void FighterMover::SetID(const std::string& id)
+        {
+            m_ID = id;
+        }
+
+        std::string FighterMover::GetID() const
+        {
+            return m_ID;
+        }
+
         void FighterMover::Move()
         {
             std::scoped_lock<std::mutex> lock(m_PositionMutex);
@@ -90,6 +100,13 @@ namespace vector
             std::scoped_lock<std::mutex> lock(m_PositionMutex);
 
             return m_InertialData;
+        }
+
+        std::string FighterMover::ToString() const
+        {
+            return "" + m_ID + "\nx: " + std::to_string(m_InertialData.xCoord) + "\ny: " + std::to_string(m_InertialData.yCoord) +
+                            "\nheading: " + std::to_string(m_InertialData.curHeading) + "\nspeed: " + std::to_string(m_InertialData.curSpeed);
+
         }
     } // namespace sim
 } // namespace vector

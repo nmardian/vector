@@ -44,6 +44,20 @@ namespace vector
 
             result.command = cmdType;
 
+            if(end != std::string::npos)
+            {
+                start = end + 1;
+                end = trimmedStr.find(" ", start);
+                result.subject = trimmedStr.substr(start, end - start);
+            }
+
+            if(end != std::string::npos)
+            {
+                start = end + 1;
+                end = trimmedStr.find(" ", start);
+                result.object = trimmedStr.substr(start, end - start);
+            }
+
             return result;
         }
 

@@ -3,6 +3,8 @@
 
 #include "InertialData.h"
 
+#include <string>
+
 namespace vector
 {
     namespace sim
@@ -10,6 +12,20 @@ namespace vector
         class MoverInterface
         {
             public:
+                /**
+                 * @brief Set this Mover's unique ID
+                 * 
+                 * @param id this Mover's unique ID
+                 */
+                virtual void SetID(const std::string& id) = 0;
+
+                /**
+                 * @brief Get this Mover's unique ID
+                 * 
+                 * @return std::string this Mover's unique ID
+                 */
+                virtual std::string GetID() const = 0;
+
                 /**
                  * @brief Causes the Mover to update its PositionalData based on its speed, heading etc.
                  * 
@@ -40,6 +56,13 @@ namespace vector
                  * @return PositionalData The PositionalData of this Mover
                  */
                 virtual InertialData GetInertialData() const = 0;
+
+                /**
+                 * @brief Get a string representation of this Mover
+                 * 
+                 * @return std::string string representation of this Mover
+                 */
+                virtual std::string ToString() const = 0;
         };
     }
 }

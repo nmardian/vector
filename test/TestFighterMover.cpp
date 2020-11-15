@@ -180,6 +180,13 @@ namespace
         EXPECT_EQ((curY + vector::util::MathUtil::GetYComponentOfSpeed(curSpeed, curHeading)), mover.GetInertialData().yCoord);
         EXPECT_EQ(vector::sim::FIGHTER_SPEED_MAX, mover.GetInertialData().curSpeed);
         EXPECT_EQ(curHeading, mover.GetInertialData().curHeading);
+
+        mover.Move();
+
+        EXPECT_EQ((curX + (2 * vector::util::MathUtil::GetXComponentOfSpeed(curSpeed, curHeading))), mover.GetInertialData().xCoord);
+        EXPECT_EQ((curY + (2 * vector::util::MathUtil::GetYComponentOfSpeed(curSpeed, curHeading))), mover.GetInertialData().yCoord);
+        EXPECT_EQ(vector::sim::FIGHTER_SPEED_MAX, mover.GetInertialData().curSpeed);
+        EXPECT_EQ(curHeading, mover.GetInertialData().curHeading);        
     }
 
     TEST_F(TestFighterMover, TestMoveTurnRight)
@@ -214,6 +221,11 @@ namespace
 
         EXPECT_EQ(curHeading + vector::sim::FIGHTER_TURN_RATE, mover.GetInertialData().curHeading);
         EXPECT_EQ(vector::sim::FIGHTER_SPEED_MAX - vector::sim::FIGHTER_ACCL_DCCL, mover.GetInertialData().curSpeed);
+
+        mover.Move();
+
+        EXPECT_EQ(curHeading + vector::sim::FIGHTER_TURN_RATE, mover.GetInertialData().curHeading);
+        EXPECT_EQ(vector::sim::FIGHTER_SPEED_MAX, mover.GetInertialData().curSpeed);
     }
 
     TEST_F(TestFighterMover, TestMoveTurnLeft)
@@ -248,5 +260,10 @@ namespace
 
         EXPECT_EQ(vector::sim::HEADING_FULL_CIRCLE - vector::sim::FIGHTER_TURN_RATE, mover.GetInertialData().curHeading);
         EXPECT_EQ(vector::sim::FIGHTER_SPEED_MAX - vector::sim::FIGHTER_ACCL_DCCL, mover.GetInertialData().curSpeed);
+
+        mover.Move();
+
+        EXPECT_EQ(vector::sim::HEADING_FULL_CIRCLE - vector::sim::FIGHTER_TURN_RATE, mover.GetInertialData().curHeading);
+        EXPECT_EQ(vector::sim::FIGHTER_SPEED_MAX, mover.GetInertialData().curSpeed);
     }
 } // namespace
