@@ -4,7 +4,7 @@ namespace vector
 {
     namespace sim
     {
-        bool GameEngine::AddMover(std::unique_ptr<MoverInterface> moverPtr)
+        bool GameEngine::AddMover(std::shared_ptr<MoverInterface> moverPtr)
         {
             if(m_AllMoversMap.find(moverPtr->GetID()) != m_AllMoversMap.end())
             {
@@ -17,11 +17,10 @@ namespace vector
 
         void GameEngine::Tick()
         {
-            // iterate over Movers, call Move
-            
-            // get each Mover's inertial data
-
-            // pass inertial data to draw-er
+            for(auto mapItr : m_AllMoversMap)
+            {
+                mapItr.second->Move();
+            }
         }
     } // namespace sim
 } // namespace vector

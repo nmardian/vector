@@ -8,16 +8,13 @@ namespace vector
 {
     namespace sim
     {
-        FighterMover::FighterMover(MoverParams performanceValues)
+        FighterMover::FighterMover(const std::string& ID, MoverParams performanceValues)
             : m_InertialData()
             , m_PerformanceValues(performanceValues)
             , m_DesiredHeading(0)
+            , m_ID(ID)
+            , m_Status(true)
         {
-        }
-
-        void FighterMover::SetID(const std::string& id)
-        {
-            m_ID = id;
         }
 
         std::string FighterMover::GetID() const
@@ -27,8 +24,6 @@ namespace vector
 
         void FighterMover::Move()
         {
-            std::scoped_lock<std::mutex> lock(m_PositionMutex);
-
             InertialData newInertial = m_InertialData;
             if(m_InertialData.curHeading != m_DesiredHeading)
             {
@@ -55,19 +50,23 @@ namespace vector
                 // flying straight increases speed
                 newInertial.curSpeed = std::min(SPEED_MAX, (m_InertialData.curSpeed + FIGHTER_ACCL_DCCL));
             }
+            
+            newInertial.xCoord = m_InertialData.xCoord + vector::util::MathUtil::GetXComponentOfSpeed(m_InertialData.curSpeed, m_InertialData.curHeading);;
+            newInertial.yCoord = m_InertialData.yCoord + vector::util::MathUtil::GetYComponentOfSpeed(m_InertialData.curSpeed, m_InertialData.curHeading);;
 
-            newInertial.xCoord = m_InertialData.xCoord + vector::util::MathUtil::GetXComponentOfSpeed(m_InertialData.curSpeed, m_InertialData.curHeading);
-            newInertial.yCoord = m_InertialData.yCoord + vector::util::MathUtil::GetYComponentOfSpeed(m_InertialData.curSpeed, m_InertialData.curHeading);
+            if(newInertial.xCoord < vector::sim::X_COORD_MIN || newInertial.xCoord > vector::sim::X_COORD_MAX ||
+                newInertial.yCoord < vector::sim::Y_COORD_MIN || newInertial.yCoord > vector::sim::Y_COORD_MAX)
+            {
+                m_Status = false;
+            }
 
             m_InertialData = newInertial;
-            
         }
 
         bool FighterMover::SetNewHeading(const angle newHeadingDegrees)
         {
             if(newHeadingDegrees >= HEADING_MIN && newHeadingDegrees <= HEADING_MAX)
             {
-                std::scoped_lock<std::mutex> lock(m_PositionMutex);
                 m_DesiredHeading = newHeadingDegrees;
                 return true;
             }
@@ -82,12 +81,12 @@ namespace vector
                 initialInertialData.xCoord >= X_COORD_MIN && initialInertialData.yCoord >= Y_COORD_MIN &&
                 initialInertialData.xCoord <= X_COORD_MAX && initialInertialData.yCoord <= Y_COORD_MAX)
             {
-                std::scoped_lock<std::mutex> lock(m_PositionMutex);
-
                 m_InertialData.curHeading = initialInertialData.curHeading;
                 m_InertialData.curSpeed = initialInertialData.curSpeed;
                 m_InertialData.xCoord = initialInertialData.xCoord;
                 m_InertialData.yCoord = initialInertialData.yCoord;
+
+                m_DesiredHeading = m_InertialData.curHeading;
 
                 return true;
             }
@@ -97,9 +96,17 @@ namespace vector
 
         InertialData FighterMover::GetInertialData() const
         {
-            std::scoped_lock<std::mutex> lock(m_PositionMutex);
-
             return m_InertialData;
+        }
+
+        void FighterMover::Destroy()
+        {
+            m_Status = false;
+        }
+        
+        bool FighterMover::GetStatus() const
+        {
+            return m_Status;
         }
 
         std::string FighterMover::ToString() const

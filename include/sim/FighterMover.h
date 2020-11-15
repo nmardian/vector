@@ -5,7 +5,6 @@
 
 #include "SimTypes.h"
 #include "SimParams.h"
-#include <mutex>
 
 namespace vector
 {
@@ -22,20 +21,13 @@ namespace vector
                  * 
                  * @param performanceValues Performance characteristics of this FighterMover
                  */
-                FighterMover(MoverParams performanceValues);
+                FighterMover(const std::string& ID, MoverParams performanceValues);
 
                 /**
                  * @brief Default Destructor
                  * 
                  */
                 virtual FighterMover::~FighterMover() = default;
-
-                /**
-                 * @brief Set this Mover's unique ID
-                 * 
-                 * @param id this Mover's unique ID
-                 */
-                void SetID(const std::string& id) override;
 
                 /**
                  * @brief Get this Mover's unique ID
@@ -76,6 +68,20 @@ namespace vector
                 InertialData GetInertialData() const override;
 
                 /**
+                 * @brief Mark this Mover are destroyed.
+                 * 
+                 */
+                virtual void Destroy() override;
+
+                /**
+                 * @brief Get whether this Mover is destroyed or not
+                 * 
+                 * @return true if this Mover is functioning
+                 * @return false if this mover is destroyed
+                 */
+                virtual bool GetStatus() const override;
+
+                /**
                  * @brief Get a string representation of this Mover
                  * 
                  * @return std::string string representation of this Mover
@@ -89,10 +95,10 @@ namespace vector
 
             private:
                 InertialData m_InertialData;
-                mutable std::mutex m_PositionMutex;
                 MoverParams m_PerformanceValues;
                 angle m_DesiredHeading;
                 std::string m_ID;
+                bool m_Status{true};
         };
     }
 }

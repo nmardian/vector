@@ -12,12 +12,7 @@ namespace vector
         class MoverInterface
         {
             public:
-                /**
-                 * @brief Set this Mover's unique ID
-                 * 
-                 * @param id this Mover's unique ID
-                 */
-                virtual void SetID(const std::string& id) = 0;
+                virtual ~MoverInterface() = default;
 
                 /**
                  * @brief Get this Mover's unique ID
@@ -56,6 +51,20 @@ namespace vector
                  * @return PositionalData The PositionalData of this Mover
                  */
                 virtual InertialData GetInertialData() const = 0;
+
+                /**
+                 * @brief Mark this Mover as destroyed.
+                 * 
+                 */
+                virtual void Destroy() = 0;
+
+                /**
+                 * @brief Get whether this Mover is destroyed or not
+                 * 
+                 * @return true if this Mover is functioning
+                 * @return false if this mover is destroyed
+                 */
+                virtual bool GetStatus() const = 0;
 
                 /**
                  * @brief Get a string representation of this Mover

@@ -33,7 +33,7 @@ namespace vector
                  * @return true If the Mover was successfully added
                  * @return false If the Mover was unable to be added (non-unique ID, etc)
                  */
-                bool AddMover(std::unique_ptr<MoverInterface> moverPtr);
+                bool AddMover(std::shared_ptr<MoverInterface> moverPtr);
 
                 /**
                  * @brief Run the Engine for one tick
@@ -42,7 +42,7 @@ namespace vector
                 void Tick();
             
             private:
-                std::unordered_map<std::string, std::unique_ptr<MoverInterface>> m_AllMoversMap;
+                std::unordered_map<std::string, std::shared_ptr<MoverInterface>> m_AllMoversMap;
         };
     } // namespace sim
 } // namespace vector

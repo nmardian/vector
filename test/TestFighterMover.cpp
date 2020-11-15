@@ -20,21 +20,35 @@ namespace
             vector::sim::MoverParams perfValues;
     };
 
-    TEST_F(TestFighterMover, TestPositionDefaultValues)
+    TEST_F(TestFighterMover, TestDefaultVals)
     {
         TestFighterMover::SetUp();
-        vector::sim::FighterMover mover(perfValues);
-
+        vector::sim::FighterMover mover("brot", perfValues);
+        
+        EXPECT_EQ("brot", mover.GetID());
+        EXPECT_TRUE(mover.GetStatus());
         EXPECT_EQ(mover.GetInertialData().curHeading, 0);
         EXPECT_EQ(mover.GetInertialData().curSpeed, 0.0);
         EXPECT_EQ(mover.GetInertialData().xCoord, 0.0);
         EXPECT_EQ(mover.GetInertialData().yCoord, 0.0);
     }
 
+    TEST_F(TestFighterMover, TestDestroy)
+    {
+        TestFighterMover::SetUp();
+        vector::sim::FighterMover mover("brot", perfValues);
+
+        EXPECT_TRUE(mover.GetStatus());
+
+        mover.Destroy();
+
+        EXPECT_FALSE(mover.GetStatus());
+    }
+
     TEST_F(TestFighterMover, TestInitialPosValidZeroes)
     {
         TestFighterMover::SetUp();
-        vector::sim::FighterMover mover(perfValues);
+        vector::sim::FighterMover mover("brot", perfValues);
 
         vector::sim::InertialData initialPos;
         initialPos.curHeading = 0;
@@ -55,7 +69,7 @@ namespace
     TEST_F(TestFighterMover, TestInitialPosValidNonzeroes)
     {
         TestFighterMover::SetUp();
-        vector::sim::FighterMover mover(perfValues);
+        vector::sim::FighterMover mover("brot", perfValues);
 
         vector::sim::InertialData initialPos;
         initialPos.curHeading = 90;
@@ -76,7 +90,7 @@ namespace
     TEST_F(TestFighterMover, TestInitialPosInvalidLow)
     {
         TestFighterMover::SetUp();
-        vector::sim::FighterMover mover(perfValues);
+        vector::sim::FighterMover mover("brot", perfValues);
 
         vector::sim::InertialData initialPos;
         initialPos.curHeading = vector::sim::HEADING_MIN - 1;
@@ -97,7 +111,7 @@ namespace
     TEST_F(TestFighterMover, TestInitialPosInvalidHigh)
     {
         TestFighterMover::SetUp();
-        vector::sim::FighterMover mover(perfValues);
+        vector::sim::FighterMover mover("brot", perfValues);
 
         vector::sim::InertialData initialPos;
         initialPos.curHeading = vector::sim::HEADING_MAX + 1;
@@ -118,7 +132,7 @@ namespace
     TEST_F(TestFighterMover, TestSetHeadingValid)
     {
         TestFighterMover::SetUp();
-        vector::sim::FighterMover mover(perfValues);
+        vector::sim::FighterMover mover("brot", perfValues);
 
         EXPECT_EQ(mover.GetInertialData().curHeading, 0);
 
@@ -135,7 +149,7 @@ namespace
     TEST_F(TestFighterMover, TestSetHeadingInvalid)
     {
         TestFighterMover::SetUp();
-        vector::sim::FighterMover mover(perfValues);
+        vector::sim::FighterMover mover("brot", perfValues);
 
         EXPECT_EQ(mover.GetInertialData().curHeading, 0);
 
@@ -152,7 +166,7 @@ namespace
     TEST_F(TestFighterMover, TestMoveStraightConstSpeed)
     {
         TestFighterMover::SetUp();
-        vector::sim::FighterMover mover(perfValues);
+        vector::sim::FighterMover mover("brot", perfValues);
 
         vector::sim::coord curX = vector::sim::X_COORD_MAX / 2;
         vector::sim::coord curY = vector::sim::Y_COORD_MAX / 2;
@@ -192,7 +206,7 @@ namespace
     TEST_F(TestFighterMover, TestMoveTurnRight)
     {
         TestFighterMover::SetUp();
-        vector::sim::FighterMover mover(perfValues);
+        vector::sim::FighterMover mover("brot", perfValues);
 
         vector::sim::coord curX = vector::sim::X_COORD_MAX / 2;
         vector::sim::coord curY = vector::sim::Y_COORD_MAX / 2;
@@ -231,7 +245,7 @@ namespace
     TEST_F(TestFighterMover, TestMoveTurnLeft)
     {
         TestFighterMover::SetUp();
-        vector::sim::FighterMover mover(perfValues);
+        vector::sim::FighterMover mover("brot", perfValues);
 
         vector::sim::coord curX = vector::sim::X_COORD_MAX / 2;
         vector::sim::coord curY = vector::sim::Y_COORD_MAX / 2;
@@ -265,5 +279,97 @@ namespace
 
         EXPECT_EQ(vector::sim::HEADING_FULL_CIRCLE - vector::sim::FIGHTER_TURN_RATE, mover.GetInertialData().curHeading);
         EXPECT_EQ(vector::sim::FIGHTER_SPEED_MAX, mover.GetInertialData().curSpeed);
+    }
+
+    TEST_F(TestFighterMover, TestMoveDestroyTop)
+    {
+        TestFighterMover::SetUp();
+        vector::sim::FighterMover mover("brot", perfValues);
+
+        vector::sim::InertialData initialPos;
+        initialPos.curHeading = 0;
+        initialPos.curSpeed = vector::sim::FIGHTER_SPEED_MAX;
+        initialPos.xCoord = vector::sim::X_COORD_MAX;
+        initialPos.yCoord = vector::sim::Y_COORD_MAX - vector::sim::FIGHTER_SPEED_MAX;
+        bool valid = mover.SetInitialInertialData(initialPos);
+
+        EXPECT_TRUE(mover.GetStatus());
+
+        mover.Move();
+
+        EXPECT_TRUE(mover.GetStatus());
+
+        mover.Move();
+
+        EXPECT_FALSE(mover.GetStatus());
+    }
+
+    TEST_F(TestFighterMover, TestMoveDestroyBottom)
+    {
+        TestFighterMover::SetUp();
+        vector::sim::FighterMover mover("brot", perfValues);
+
+        vector::sim::InertialData initialPos;
+        initialPos.curHeading = 180;
+        initialPos.curSpeed = vector::sim::FIGHTER_SPEED_MAX;
+        initialPos.xCoord = vector::sim::X_COORD_MAX;
+        initialPos.yCoord = vector::sim::Y_COORD_MIN + vector::sim::FIGHTER_SPEED_MAX;
+        bool valid = mover.SetInitialInertialData(initialPos);
+        
+        EXPECT_TRUE(mover.GetStatus());
+
+        mover.Move();
+
+        EXPECT_TRUE(mover.GetStatus());
+
+        mover.Move();
+
+        EXPECT_FALSE(mover.GetStatus());
+    }
+
+    TEST_F(TestFighterMover, TestMoveDestroyLeft)
+    {
+        TestFighterMover::SetUp();
+        vector::sim::FighterMover mover("brot", perfValues);
+
+        vector::sim::InertialData initialPos;
+        initialPos.curHeading = 270;
+        initialPos.curSpeed = vector::sim::FIGHTER_SPEED_MAX;
+        initialPos.xCoord = vector::sim::X_COORD_MIN + vector::sim::FIGHTER_SPEED_MAX;
+        initialPos.yCoord = vector::sim::Y_COORD_MAX;
+        bool valid = mover.SetInitialInertialData(initialPos);
+        
+        EXPECT_TRUE(mover.GetStatus());
+
+        mover.Move();
+
+        EXPECT_TRUE(mover.GetStatus());
+
+        mover.Move();
+
+        EXPECT_FALSE(mover.GetStatus());
+    }
+
+    TEST_F(TestFighterMover, TestMoveDestroyRight)
+    {
+        TestFighterMover::SetUp();
+        vector::sim::FighterMover mover("brot", perfValues);
+
+        vector::sim::InertialData initialPos;
+        initialPos.curHeading = 90;
+        initialPos.curSpeed = vector::sim::FIGHTER_SPEED_MAX;
+        initialPos.xCoord = vector::sim::X_COORD_MAX - vector::sim::FIGHTER_SPEED_MAX;
+        initialPos.yCoord = vector::sim::Y_COORD_MAX;
+        bool valid = mover.SetInitialInertialData(initialPos);
+        
+        EXPECT_TRUE(mover.GetStatus());
+
+        mover.Move();
+
+        EXPECT_TRUE(mover.GetStatus());
+
+        mover.Move();
+
+        EXPECT_FALSE(mover.GetStatus());
     }
 } // namespace
