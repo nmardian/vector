@@ -71,7 +71,7 @@ namespace vector
                  * @brief Mark this Mover are destroyed.
                  * 
                  */
-                virtual void Destroy() override;
+                void Destroy() override;
 
                 /**
                  * @brief Get whether this Mover is destroyed or not
@@ -79,14 +79,14 @@ namespace vector
                  * @return true if this Mover is functioning
                  * @return false if this mover is destroyed
                  */
-                virtual bool GetStatus() const override;
+                bool GetStatus() const override;
 
                 /**
                  * @brief Get a string representation of this Mover
                  * 
                  * @return std::string string representation of this Mover
                  */
-                virtual std::string ToString() const override;
+                std::string ToString() const override;
 
                 FighterMover(const FighterMover&) = delete;
                 FighterMover& operator=(const FighterMover&) = delete;
