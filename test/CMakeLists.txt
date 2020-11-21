@@ -7,10 +7,13 @@ target_include_directories(TestVector PUBLIC "${PROJECT_SOURCE_DIR}/include")
 
 target_link_libraries(TestVector 
         GTest::gtest 
-        GTest::gtest_main
+        GTest::gmock
+        GTest::gmock_main
         VectorLib)
 
 target_sources(TestVector PUBLIC
+        main.cpp
         TestInputParser.cpp
         TestFighterMover.cpp
+        TestGameEngine.cpp
 )      
