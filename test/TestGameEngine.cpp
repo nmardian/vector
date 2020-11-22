@@ -23,17 +23,17 @@ TEST(TestGameEngine, TestAddMover)
     std::shared_ptr<MockMover> mockMover = std::make_shared<MockMover>();
     vector::sim::GameEngine engine;
 
+    // sucessfully add Mover with unique ID
     EXPECT_CALL(*mockMover, GetID()).WillRepeatedly(::testing::Return(moverID));
     bool added = engine.AddMover(mockMover);
-
     EXPECT_TRUE(added);
-
     auto mover = engine.GetMover(moverID);
 
+    // verify retrieved ID matches set ID
     EXPECT_EQ(moverID, mover->GetID());
 
+    // verify nullptr is returned on bad ID
     mover = engine.GetMover("fake");
-
     EXPECT_EQ(nullptr, mover);
 }
 
@@ -43,15 +43,14 @@ TEST(TestGameEngine, TestTick)
     std::shared_ptr<MockMover> mockMover = std::make_shared<MockMover>();
     vector::sim::GameEngine engine;
 
+    // sucessfully add Mover with unique ID
     EXPECT_CALL(*mockMover, GetID()).WillRepeatedly(::testing::Return(moverID));
-
     bool added = engine.AddMover(mockMover);
-
     EXPECT_TRUE(added);
 
+    // Move() is called on Mover's with status true (not destroyed)
     EXPECT_CALL(*mockMover, GetStatus()).WillOnce(::testing::Return(true));
     EXPECT_CALL(*mockMover, Move);
-
     engine.Tick();
 }
 
@@ -61,15 +60,14 @@ TEST(TestGameEngine, TestTickDestroyed)
     std::shared_ptr<MockMover> mockMover = std::make_shared<MockMover>();
     vector::sim::GameEngine engine;
 
+    // sucessfully add Mover with unique ID
     EXPECT_CALL(*mockMover, GetID()).WillRepeatedly(::testing::Return(moverID));
-
     bool added = engine.AddMover(mockMover);
-
     EXPECT_TRUE(added);
 
+    // Move() is not called on Movers with status false (destroyed)
     EXPECT_CALL(*mockMover, GetStatus()).WillOnce(::testing::Return(false));
     EXPECT_CALL(*mockMover, Move).Times(0);
-
     engine.Tick();
 }
 
@@ -98,21 +96,20 @@ TEST(TestGameEngine, TestInputCommandVector)
     badObjectCmd.subject = moverID;
     badObjectCmd.object = "fake";
 
+    // sucessfully add Mover with unique ID
     EXPECT_CALL(*mockMover, GetID()).WillRepeatedly(::testing::Return(moverID));
-
     bool added = engine.AddMover(mockMover);
-
     EXPECT_TRUE(added);
 
+    // SetNewHeading should be called on receipt of valid vector cmd
     EXPECT_CALL(*mockMover, SetNewHeading(vectorAngle));
-
     engine.InputCommand(goodCmd);
 
+    // SetNewHeading should not be called on receipt of bad vector cmd
     EXPECT_CALL(*mockMover, SetNewHeading(vectorAngle)).Times(0);
-
     engine.InputCommand(badSubjectCmd);
 
+    // SetNewHeading should not be called on receipt of bad vector cmd
     EXPECT_CALL(*mockMover, SetNewHeading(vectorAngle)).Times(0);
-
     engine.InputCommand(badObjectCmd);
 }
