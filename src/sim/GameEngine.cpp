@@ -91,16 +91,15 @@ namespace vector
                 {
                     markForRemove.push_back(mapItr.first);
                 }
+            }
 
-                for(auto itr : markForRemove)
+            for(auto itr : markForRemove)
+            {
+                auto toRemove = m_AllMoversMap.find(itr);
+                if(toRemove != m_AllMoversMap.end())
                 {
-                    auto toRemove = m_AllMoversMap.find(itr);
-                    if(toRemove != m_AllMoversMap.end())
-                    {
-                        m_AllMoversMap.erase(toRemove);
-                    }
+                    m_AllMoversMap.erase(toRemove);
                 }
-                
             }
         }
     } // namespace sim
