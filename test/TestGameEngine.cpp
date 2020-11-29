@@ -171,4 +171,21 @@ TEST(TestGameEngine, TestGameState)
     EXPECT_TRUE(added);
 
     vector::sim::GameState gameState = engine.GetGameState();
+
+    // GameState should have two Movers
+    EXPECT_EQ(2, gameState.moverList.size());
+
+    EXPECT_EQ(moverOneID, gameState.moverList.at(0).ID);
+    EXPECT_EQ(teamOneID, gameState.moverList.at(0).teamID);
+    EXPECT_EQ(expectedIntertialOne.curHeading, gameState.moverList.at(0).inertialData.curHeading);
+    EXPECT_EQ(expectedIntertialOne.curSpeed, gameState.moverList.at(0).inertialData.curSpeed);
+    EXPECT_EQ(expectedIntertialOne.xCoord, gameState.moverList.at(0).inertialData.xCoord);
+    EXPECT_EQ(expectedIntertialOne.yCoord, gameState.moverList.at(0).inertialData.yCoord);
+
+    EXPECT_EQ(moverTwoID, gameState.moverList.at(1).ID);
+    EXPECT_EQ(teamTwoID, gameState.moverList.at(1).teamID);
+    EXPECT_EQ(expectedIntertialTwo.curHeading, gameState.moverList.at(1).inertialData.curHeading);
+    EXPECT_EQ(expectedIntertialTwo.curSpeed, gameState.moverList.at(1).inertialData.curSpeed);
+    EXPECT_EQ(expectedIntertialTwo.xCoord, gameState.moverList.at(1).inertialData.xCoord);
+    EXPECT_EQ(expectedIntertialTwo.yCoord, gameState.moverList.at(1).inertialData.yCoord);
 }
