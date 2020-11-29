@@ -114,3 +114,61 @@ TEST(TestGameEngine, TestInputCommandVector)
     EXPECT_CALL(*mockMover, SetNewHeading(vectorAngle)).Times(0);
     engine.InputCommand(badObjectCmd);
 }
+
+TEST(TestGameEngine, TestGameState)
+{
+    std::string moverOneID = "brot";
+    uint8_t teamOneID = 1;
+    
+    std::string moverTwoID = "marm";
+    uint8_t teamTwoID = 2;
+    
+    vector::sim::InertialData expectedIntertialOne;
+    expectedIntertialOne.curHeading = 0;
+    expectedIntertialOne.curSpeed = 0;
+    expectedIntertialOne.xCoord = 0;
+    expectedIntertialOne.yCoord = 0;
+
+    vector::sim::InertialData expectedIntertialTwo;
+    expectedIntertialTwo.curHeading = 1;
+    expectedIntertialTwo.curSpeed = 1;
+    expectedIntertialTwo.xCoord = 1;
+    expectedIntertialTwo.yCoord = 1;
+
+    vector::sim::MoverState moverStateOne;
+    moverStateOne.ID = moverOneID;
+    moverStateOne.teamID = teamOneID;
+    moverStateOne.inertialData = expectedIntertialOne;
+
+    vector::sim::MoverState moverStateTwo;
+    moverStateTwo.ID = moverTwoID;
+    moverStateTwo.teamID = teamTwoID;
+    moverStateTwo.inertialData = expectedIntertialTwo;
+
+    vector::sim::GameState expectedState;
+    expectedState.moverList.push_back(moverStateOne);
+    expectedState.moverList.push_back(moverStateTwo);
+    
+    std::shared_ptr<MockMover> mockMoverOne = std::make_shared<MockMover>();
+    std::shared_ptr<MockMover> mockMoverTwo = std::make_shared<MockMover>();
+    
+    vector::sim::GameEngine engine;
+
+    // GetGameState will pull ID, TeamID and InertialData from all Movers
+    EXPECT_CALL(*mockMoverOne, GetID()).WillRepeatedly(::testing::Return(moverOneID));
+    EXPECT_CALL(*mockMoverOne, GetTeam()).WillOnce(::testing::Return(teamOneID));
+    EXPECT_CALL(*mockMoverOne, GetInertialData()).WillOnce(::testing::Return(expectedIntertialOne));
+
+    EXPECT_CALL(*mockMoverTwo, GetID()).WillRepeatedly(::testing::Return(moverTwoID));
+    EXPECT_CALL(*mockMoverTwo, GetTeam()).WillOnce(::testing::Return(teamTwoID));
+    EXPECT_CALL(*mockMoverTwo, GetInertialData()).WillOnce(::testing::Return(expectedIntertialTwo));
+
+    // sucessfully add Mover with unique ID
+    bool added = engine.AddMover(mockMoverOne);
+    EXPECT_TRUE(added);
+    
+    added = engine.AddMover(mockMoverTwo);
+    EXPECT_TRUE(added);
+
+    vector::sim::GameState gameState = engine.GetGameState();
+}

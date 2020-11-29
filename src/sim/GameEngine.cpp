@@ -1,4 +1,6 @@
 #include "sim/GameEngine.h"
+#include "sim/GameState.h"
+
 #include <stdexcept>
 
 namespace vector
@@ -83,10 +85,30 @@ namespace vector
             return result;
         }
 
+        GameState GameEngine::GetGameState() const
+        {
+            std::scoped_lock<std::mutex> lock(m_MoversMutex);
+
+            GameState gameState;
+            
+            for(auto mapItr : m_AllMoversMap)
+            {
+                MoverState moverState;
+
+                moverState.ID = mapItr.second->GetID();
+                moverState.teamID = mapItr.second->GetTeam();
+                moverState.inertialData = mapItr.second->GetInertialData();
+
+                gameState.moverList.push_back(moverState);
+            }
+
+            return gameState;
+        }
+
         void GameEngine::Tick()
         {
             std::scoped_lock<std::mutex> lock(m_MoversMutex);
-            
+
             std::vector<std::string> markForRemove;
             for(auto mapItr : m_AllMoversMap)
             {

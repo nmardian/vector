@@ -2,6 +2,7 @@
 #define GAME_ENGINE_H
 
 #include "sim/MoverInterface.h"
+#include "sim/GameState.h"
 #include "util/Command.h"
 
 #include <vector>
@@ -54,6 +55,13 @@ namespace vector
                 bool InputCommand(util::Command cmd);
 
                 /**
+                 * @brief Get a snapshot representation of this GameEngine's state
+                 * 
+                 * @return this GameEngine's state (Mover intertial data, etc)
+                 */
+                GameState GetGameState() const;
+
+                /**
                  * @brief Run the Engine for one tick
                  * 
                  */
@@ -61,7 +69,7 @@ namespace vector
             
             private:
                 std::unordered_map<std::string, std::shared_ptr<MoverInterface>> m_AllMoversMap;
-                std::mutex m_MoversMutex;
+                mutable std::mutex m_MoversMutex;
         };
     } // namespace sim
 } // namespace vector
