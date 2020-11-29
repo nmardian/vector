@@ -3,6 +3,8 @@
 
 #include "SimTypes.h"
 
+#include <stdint.h>
+
 namespace vector
 {
     namespace sim
@@ -18,6 +20,8 @@ namespace vector
         static const coord X_COORD_MAX = 375500.0;
         static const coord Y_COORD_MIN = 0.0;
         static const coord Y_COORD_MAX = 375500.0;
+
+        static const uint8_t UNK_TEAM_ID = 0;
         
     } // namespace sim
 }  // namespace vector

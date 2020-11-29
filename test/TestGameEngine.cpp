@@ -14,6 +14,7 @@ class MockMover : public vector::sim::MoverInterface
         MOCK_METHOD(vector::sim::InertialData, GetInertialData, (), (const, override));
         MOCK_METHOD(void, Destroy, (), (override));
         MOCK_METHOD(bool, GetStatus, (), (const, override));
+        MOCK_METHOD(uint8_t, GetTeam, (), (const, override));
         MOCK_METHOD(std::string, ToString, (), (const, override));
 };
 

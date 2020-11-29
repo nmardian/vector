@@ -7,6 +7,10 @@ namespace vector
 {
     namespace sim
     {
+        /**
+         * @brief Struct to store a Mover's intertial data
+         * 
+         */
         struct InertialData
         {
             angle curHeading{0};

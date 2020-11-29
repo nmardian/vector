@@ -4,6 +4,7 @@
 #include "InertialData.h"
 
 #include <string>
+#include <stdint.h>
 
 namespace vector
 {
@@ -65,6 +66,13 @@ namespace vector
                  * @return false if this mover is destroyed
                  */
                 virtual bool GetStatus() const = 0;
+
+                /**
+                 * @brief Get this Mover's team ID
+                 * 
+                 * @return this Mover's team ID
+                 */
+                virtual uint8_t GetTeam() const = 0;
 
                 /**
                  * @brief Get a string representation of this Mover

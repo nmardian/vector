@@ -8,12 +8,13 @@ namespace vector
 {
     namespace sim
     {
-        FighterMover::FighterMover(const std::string& ID, MoverParams performanceValues)
+        FighterMover::FighterMover(const std::string& ID, const uint8_t teamID, MoverParams performanceValues)
             : m_InertialData()
             , m_PerformanceValues(performanceValues)
             , m_DesiredHeading(0)
             , m_ID(ID)
             , m_Status(true)
+            , m_TeamID(teamID)
         {
         }
 
@@ -107,6 +108,11 @@ namespace vector
         bool FighterMover::GetStatus() const
         {
             return m_Status;
+        }
+
+        uint8_t FighterMover::GetTeam() const
+        {
+            return m_TeamID;
         }
 
         std::string FighterMover::ToString() const

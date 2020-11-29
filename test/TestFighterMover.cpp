@@ -23,10 +23,11 @@ namespace
     TEST_F(TestFighterMover, TestDefaultVals)
     {
         TestFighterMover::SetUp();
-        vector::sim::FighterMover mover("brot", perfValues);
+        vector::sim::FighterMover mover("brot", 1, perfValues);
         
         // verify default values are set correctly
         EXPECT_EQ("brot", mover.GetID());
+        EXPECT_EQ(1, mover.GetTeam());
         EXPECT_TRUE(mover.GetStatus());
         EXPECT_EQ(mover.GetInertialData().curHeading, 0);
         EXPECT_EQ(mover.GetInertialData().curSpeed, 0.0);
@@ -37,7 +38,7 @@ namespace
     TEST_F(TestFighterMover, TestDestroy)
     {
         TestFighterMover::SetUp();
-        vector::sim::FighterMover mover("brot", perfValues);
+        vector::sim::FighterMover mover("brot", 1, perfValues);
 
         // A Mover's status defaults to true (not destroyed)
         EXPECT_TRUE(mover.GetStatus());
@@ -50,7 +51,7 @@ namespace
     TEST_F(TestFighterMover, TestInitialPosValidZeroes)
     {
         TestFighterMover::SetUp();
-        vector::sim::FighterMover mover("brot", perfValues);
+        vector::sim::FighterMover mover("brot", 1, perfValues);
 
         vector::sim::InertialData initialPos;
         initialPos.curHeading = 0;
@@ -72,7 +73,7 @@ namespace
     TEST_F(TestFighterMover, TestInitialPosValidNonzeroes)
     {
         TestFighterMover::SetUp();
-        vector::sim::FighterMover mover("brot", perfValues);
+        vector::sim::FighterMover mover("brot", 1, perfValues);
 
         vector::sim::InertialData initialPos;
         initialPos.curHeading = 90;
@@ -94,7 +95,7 @@ namespace
     TEST_F(TestFighterMover, TestInitialPosInvalidLow)
     {
         TestFighterMover::SetUp();
-        vector::sim::FighterMover mover("brot", perfValues);
+        vector::sim::FighterMover mover("brot", 1, perfValues);
 
         vector::sim::InertialData initialPos;
         initialPos.curHeading = vector::sim::HEADING_MIN - 1;
@@ -116,7 +117,7 @@ namespace
     TEST_F(TestFighterMover, TestInitialPosInvalidHigh)
     {
         TestFighterMover::SetUp();
-        vector::sim::FighterMover mover("brot", perfValues);
+        vector::sim::FighterMover mover("brot", 1, perfValues);
 
         vector::sim::InertialData initialPos;
         initialPos.curHeading = vector::sim::HEADING_MAX + 1;
@@ -138,7 +139,7 @@ namespace
     TEST_F(TestFighterMover, TestSetHeadingValid)
     {
         TestFighterMover::SetUp();
-        vector::sim::FighterMover mover("brot", perfValues);
+        vector::sim::FighterMover mover("brot", 1, perfValues);
 
         // default heading is 0
         EXPECT_EQ(mover.GetInertialData().curHeading, 0);
@@ -159,7 +160,7 @@ namespace
     TEST_F(TestFighterMover, TestSetHeadingInvalid)
     {
         TestFighterMover::SetUp();
-        vector::sim::FighterMover mover("brot", perfValues);
+        vector::sim::FighterMover mover("brot", 1, perfValues);
 
         // default heading is 0
         EXPECT_EQ(mover.GetInertialData().curHeading, 0);
@@ -180,7 +181,7 @@ namespace
     TEST_F(TestFighterMover, TestMoveStraightConstSpeed)
     {
         TestFighterMover::SetUp();
-        vector::sim::FighterMover mover("brot", perfValues);
+        vector::sim::FighterMover mover("brot", 1, perfValues);
 
         // start the Mover in the middle of the map
         vector::sim::coord curX = vector::sim::X_COORD_MAX / 2;
@@ -222,7 +223,7 @@ namespace
     TEST_F(TestFighterMover, TestMoveTurnRight)
     {
         TestFighterMover::SetUp();
-        vector::sim::FighterMover mover("brot", perfValues);
+        vector::sim::FighterMover mover("brot", 1, perfValues);
 
         // start the Mover in the middle of the map
         vector::sim::coord curX = vector::sim::X_COORD_MAX / 2;
@@ -268,7 +269,7 @@ namespace
     TEST_F(TestFighterMover, TestMoveTurnLeft)
     {
         TestFighterMover::SetUp();
-        vector::sim::FighterMover mover("brot", perfValues);
+        vector::sim::FighterMover mover("brot", 1, perfValues);
 
         // start the Mover in the middle of the map
         vector::sim::coord curX = vector::sim::X_COORD_MAX / 2;
@@ -314,7 +315,7 @@ namespace
     TEST_F(TestFighterMover, TestMoveDestroyTop)
     {
         TestFighterMover::SetUp();
-        vector::sim::FighterMover mover("brot", perfValues);
+        vector::sim::FighterMover mover("brot", 1, perfValues);
 
         // start the Mover one Move away from the top boundary heading straight up
         vector::sim::InertialData initialPos;
@@ -338,7 +339,7 @@ namespace
     TEST_F(TestFighterMover, TestMoveDestroyBottom)
     {
         TestFighterMover::SetUp();
-        vector::sim::FighterMover mover("brot", perfValues);
+        vector::sim::FighterMover mover("brot", 1, perfValues);
 
         // start the Mover one Move away from the bottom boundary heading straight down
         vector::sim::InertialData initialPos;
@@ -367,7 +368,7 @@ namespace
     TEST_F(TestFighterMover, TestMoveDestroyLeft)
     {
         TestFighterMover::SetUp();
-        vector::sim::FighterMover mover("brot", perfValues);
+        vector::sim::FighterMover mover("brot", 1, perfValues);
 
         // start the Mover one Move away from the left boundary heading straight left
         vector::sim::InertialData initialPos;
@@ -396,7 +397,7 @@ namespace
     TEST_F(TestFighterMover, TestMoveDestroyRight)
     {
         TestFighterMover::SetUp();
-        vector::sim::FighterMover mover("brot", perfValues);
+        vector::sim::FighterMover mover("brot", 1, perfValues);
 
         // start the Mover one Move away from the right boundary heading straight right
         vector::sim::InertialData initialPos;

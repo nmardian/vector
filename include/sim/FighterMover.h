@@ -19,9 +19,11 @@ namespace vector
                 /**
                  * @brief Constructor
                  * 
+                 * @param ID                This Mover's unique ID
+                 * @param teamID            The ID of the team this Mover belongs to
                  * @param performanceValues Performance characteristics of this FighterMover
                  */
-                FighterMover(const std::string& ID, MoverParams performanceValues);
+                FighterMover(const std::string& ID, const uint8_t teamID, MoverParams performanceValues);
 
                 /**
                  * @brief Default Destructor
@@ -82,6 +84,13 @@ namespace vector
                 bool GetStatus() const override;
 
                 /**
+                 * @brief Get this Mover's team ID
+                 * 
+                 * @return this Mover's team ID
+                 */
+                uint8_t GetTeam() const override;
+
+                /**
                  * @brief Get a string representation of this Mover
                  * 
                  * @return std::string string representation of this Mover
@@ -99,6 +108,7 @@ namespace vector
                 angle m_DesiredHeading;
                 std::string m_ID;
                 bool m_Status{true};
+                uint8_t m_TeamID{UNK_TEAM_ID};
         };
     }
 }
