@@ -7,6 +7,7 @@
 #include <vector>
 #include <unordered_map>
 #include <memory>
+#include <mutex>
 
 namespace vector
 {
@@ -60,6 +61,7 @@ namespace vector
             
             private:
                 std::unordered_map<std::string, std::shared_ptr<MoverInterface>> m_AllMoversMap;
+                std::mutex m_MoversMutex;
         };
     } // namespace sim
 } // namespace vector

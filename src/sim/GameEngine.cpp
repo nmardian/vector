@@ -7,6 +7,8 @@ namespace vector
     {
         bool GameEngine::AddMover(std::shared_ptr<MoverInterface> moverPtr)
         {
+            std::scoped_lock<std::mutex> lock(m_MoversMutex);
+
             if(m_AllMoversMap.find(moverPtr->GetID()) == m_AllMoversMap.end())
             {
                 m_AllMoversMap.emplace(moverPtr->GetID(), std::move(moverPtr));
@@ -18,8 +20,9 @@ namespace vector
 
         std::shared_ptr<MoverInterface> GameEngine::GetMover(const std::string& moverID)
         {
-            auto moverItr = m_AllMoversMap.find(moverID);
+            std::scoped_lock<std::mutex> lock(m_MoversMutex);
 
+            auto moverItr = m_AllMoversMap.find(moverID);
             if(moverItr != m_AllMoversMap.end())
             {
                 return moverItr->second;
@@ -30,6 +33,8 @@ namespace vector
 
         bool GameEngine::InputCommand(util::Command cmd)
         {
+            std::scoped_lock<std::mutex> lock(m_MoversMutex);
+
             auto subject = m_AllMoversMap.find(cmd.subject);
             bool result = true;
 
@@ -80,6 +85,8 @@ namespace vector
 
         void GameEngine::Tick()
         {
+            std::scoped_lock<std::mutex> lock(m_MoversMutex);
+            
             std::vector<std::string> markForRemove;
             for(auto mapItr : m_AllMoversMap)
             {
