@@ -16,4 +16,5 @@ target_sources(TestVector PUBLIC
         TestInputParser.cpp
         TestFighterMover.cpp
         TestGameEngine.cpp
+        TestGameManager.cpp
 )      

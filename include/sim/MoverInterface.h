@@ -3,6 +3,8 @@
 
 #include "InertialData.h"
 
+#include "game/GameTypes.h"
+
 #include <string>
 #include <stdint.h>
 
@@ -72,7 +74,7 @@ namespace vector
                  * 
                  * @return this Mover's team ID
                  */
-                virtual uint8_t GetTeam() const = 0;
+                virtual vector::game::team_ID GetTeam() const = 0;
 
                 /**
                  * @brief Get a string representation of this Mover

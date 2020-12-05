@@ -14,6 +14,13 @@ namespace vector
 {
     namespace sim
     {
+        /**
+         * @brief Class to act as a state machine for the sim aspect of the game.
+         * 
+         * Responsible for maintaining "truth" as to locations, status, etc of Movers,
+         * as well as simulating the Game
+         * 
+         */
         class GameEngine
         {
             public:

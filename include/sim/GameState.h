@@ -3,6 +3,8 @@
 
 #include "sim/InertialData.h"
 
+#include "game/GameTypes.h"
+
 #include <vector>
 #include <string>
 
@@ -17,7 +19,7 @@ namespace vector
         struct MoverState
         {
             std::string ID;
-            uint8_t teamID;
+            vector::game::team_ID teamID;
             vector::sim::InertialData inertialData;
         }; // struct MoverState
 

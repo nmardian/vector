@@ -88,7 +88,7 @@ namespace vector
                  * 
                  * @return this Mover's team ID
                  */
-                uint8_t GetTeam() const override;
+                vector::game::team_ID GetTeam() const override;
 
                 /**
                  * @brief Get a string representation of this Mover
@@ -108,7 +108,7 @@ namespace vector
                 angle m_DesiredHeading;
                 std::string m_ID;
                 bool m_Status{true};
-                uint8_t m_TeamID{UNK_TEAM_ID};
+                vector::game::team_ID m_TeamID{UNK_TEAM_ID};
         };
     }
 }
