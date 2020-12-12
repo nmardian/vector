@@ -18,7 +18,84 @@ class MockPlayer : public vector::game::PlayerInterface
         MOCK_METHOD(void, RegisterCommandFunction, (std::function<bool (const std::string playerID, const vector::util::Command cmd)>), ());
 }; 
 
-TEST(TestGameManager, TestSetupCustom)
+TEST(TestGameManager, TestSetPlayerSlotsMin)
+{
+    vector::game::GameManager gameManager;
+
+    // set the number of player slots to be one less than the minimun
+    bool result = gameManager.SetNumPlayerSlots(vector::game::MIN_NUM_PLAYERS - 1);
+
+    EXPECT_FALSE(result);
+
+    // number of player slots should be the default (min)
+    EXPECT_EQ(vector::game::MIN_NUM_PLAYERS, gameManager.GetNumPlayerSlots());
+}
+
+TEST(TestGameManager, TestSetPlayerSlotsMax)
+{
+    vector::game::GameManager gameManager;
+
+    // set the number of player slots to be one more than the maximum
+    bool result = gameManager.SetNumPlayerSlots(vector::game::MAX_NUM_PLAYERS + 1);
+
+    EXPECT_FALSE(result);
+
+    // number of player slots should be the default (min)
+    EXPECT_EQ(vector::game::MIN_NUM_PLAYERS, gameManager.GetNumPlayerSlots());
+}
+
+TEST(TestGamerManager, TestSetPlayerSlotsValid)
+{
+    vector::game::GameManager gameManager;
+
+    // set the number of player slots to be a valid number
+    bool result = gameManager.SetNumPlayerSlots(3);
+
+    EXPECT_TRUE(result);
+
+    EXPECT_EQ(3, gameManager.GetNumPlayerSlots());
+}
+
+TEST(TestGamerManager, TestSetPlayerSlotsAfterStartAndStop)
+{
+    // default number of players is 2, create two mock players
+    auto mockPlayerOne = std::make_shared<::testing::NiceMock<MockPlayer>>();
+    auto mockPlayerTwo = std::make_shared<::testing::NiceMock<MockPlayer>>();
+
+    vector::game::GameManager gameManager;
+
+    ON_CALL(*mockPlayerOne, GetPlayerID()).WillByDefault(::testing::Return("nick"));
+    ON_CALL(*mockPlayerTwo, GetPlayerID()).WillByDefault(::testing::Return("mar"));
+
+    // Start fails unless all player slots are filled
+    // add mock players to game
+    gameManager.AddPlayer(mockPlayerOne);
+    gameManager.AddPlayer(mockPlayerTwo);
+
+    // game can only start if all players indicate they are ready
+    ON_CALL(*mockPlayerOne, IsReady()).WillByDefault(::testing::Return(true));
+    ON_CALL(*mockPlayerTwo, IsReady()).WillByDefault(::testing::Return(true));
+
+    gameManager.Start();
+
+    bool result = gameManager.SetNumPlayerSlots(3);
+
+    EXPECT_FALSE(result);
+
+    // number of player slots should be the default (min)
+    EXPECT_EQ(vector::game::MIN_NUM_PLAYERS, gameManager.GetNumPlayerSlots());
+
+    gameManager.Stop();
+
+    result = gameManager.SetNumPlayerSlots(3);
+
+    EXPECT_FALSE(result);
+
+    // number of player slots should be the default (min)
+    EXPECT_EQ(vector::game::MIN_NUM_PLAYERS, gameManager.GetNumPlayerSlots());
+}
+
+TEST(TestGameManager, DISABLED_TestSetupCustom)
 {
     // create a list of custom callsigns
     std::vector<vector::game::UnitData> teamOneData;
@@ -62,6 +139,10 @@ TEST(TestGameManager, TestSetupCustom)
     std::shared_ptr<MockPlayer> playerTwo = std::make_shared<MockPlayer>();
 
     vector::game::GameManager gameManager;
+
+    gameManager.SetNumPlayerSlots(2);
+
+    EXPECT_EQ(2, gameManager.GetNumPlayerSlots());
 
     // set the GameType to DogFight
     gameManager.SetGameType(vector::game::GAME_TYPE::DOGFIGHT);
