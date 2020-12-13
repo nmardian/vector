@@ -62,7 +62,7 @@ namespace vector
         {
             std::scoped_lock<std::mutex> lock(m_GameSetupMutex);
 
-            if(!m_Started && m_NumPlayerSlots == m_PlayerMap.size())
+            if(!m_Started && m_NumPlayerSlots == m_PlayerMap.size() && m_GameType != vector::game::GAME_TYPE::UNK)
             {
                 for(auto playerItr : m_PlayerMap)
                 {
@@ -83,7 +83,7 @@ namespace vector
                 m_Started = true;
 
                 m_GameThreadPtr = std::make_unique<std::thread>(&GameManager::Run, this);
-                m_GameThreadPtr->detach();
+                
                 return true;
             }
             return false;
@@ -92,6 +92,8 @@ namespace vector
         bool GameManager::Stop()
         {
             m_Ended = true;
+
+            m_GameThreadPtr->join();
 
             return true;
         }

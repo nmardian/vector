@@ -44,7 +44,7 @@ TEST(TestGameManager, TestSetPlayerSlotsMax)
     EXPECT_EQ(vector::game::MIN_NUM_PLAYERS, gameManager.GetNumPlayerSlots());
 }
 
-TEST(TestGamerManager, TestSetPlayerSlotsValid)
+TEST(TestGameManager, TestSetPlayerSlotsValid)
 {
     vector::game::GameManager gameManager;
 
@@ -56,7 +56,7 @@ TEST(TestGamerManager, TestSetPlayerSlotsValid)
     EXPECT_EQ(3, gameManager.GetNumPlayerSlots());
 }
 
-TEST(TestGamerManager, TestSetPlayerSlotsAfterStartAndStop)
+TEST(TestGameManager, TestSetPlayerSlotsAfterStartAndStop)
 {
     // default number of players is 2, create two mock players
     auto mockPlayerOne = std::make_shared<::testing::NiceMock<MockPlayer>>();
@@ -76,9 +76,14 @@ TEST(TestGamerManager, TestSetPlayerSlotsAfterStartAndStop)
     ON_CALL(*mockPlayerOne, IsReady()).WillByDefault(::testing::Return(true));
     ON_CALL(*mockPlayerTwo, IsReady()).WillByDefault(::testing::Return(true));
 
-    gameManager.Start();
+    // game can only start if the GameType is set
+    gameManager.SetGameType(vector::game::GAME_TYPE::DOGFIGHT);
 
-    bool result = gameManager.SetNumPlayerSlots(3);
+    bool result = gameManager.Start();
+
+    EXPECT_TRUE(result);
+
+    result = gameManager.SetNumPlayerSlots(3);
 
     EXPECT_FALSE(result);
 
@@ -155,6 +160,118 @@ TEST(TestGameManager, DISABLED_TestSetupCustom)
     gameManager.SetUnitData(playerOne->GetTeamID(), teamOneData);
     gameManager.SetUnitData(playerTwo->GetTeamID(), teamTwoData);
 
-    // Start that Game
-    gameManager.Start();
+    bool result = gameManager.Start();
+
+    EXPECT_TRUE(result);
+}
+
+TEST(TestGameManager, TestStartGameGood)
+{
+    // default number of players is 2, create two mock players
+    auto mockPlayerOne = std::make_shared<::testing::NiceMock<MockPlayer>>();
+    auto mockPlayerTwo = std::make_shared<::testing::NiceMock<MockPlayer>>();
+
+    ON_CALL(*mockPlayerOne, GetPlayerID()).WillByDefault(::testing::Return("nick"));
+    ON_CALL(*mockPlayerTwo, GetPlayerID()).WillByDefault(::testing::Return("mar"));
+
+    vector::game::GameManager gameManager;
+    
+    // Start fails unless all player slots are filled
+    // add mock players to game
+    gameManager.AddPlayer(mockPlayerOne);
+    gameManager.AddPlayer(mockPlayerTwo);
+
+    // game can only start if the GameType is set
+    gameManager.SetGameType(vector::game::GAME_TYPE::DOGFIGHT);
+
+    // game can only start if all players indicate they are ready
+    ON_CALL(*mockPlayerOne, IsReady()).WillByDefault(::testing::Return(true));
+    ON_CALL(*mockPlayerTwo, IsReady()).WillByDefault(::testing::Return(true));
+
+    bool result = gameManager.Start();
+
+    EXPECT_TRUE(result);
+
+    gameManager.Stop();
+}
+
+TEST(TestGameManager, TestStartGameUnkGameType)
+{
+    // default number of players is 2, create two mock players
+    auto mockPlayerOne = std::make_shared<::testing::NiceMock<MockPlayer>>();
+    auto mockPlayerTwo = std::make_shared<::testing::NiceMock<MockPlayer>>();
+
+    ON_CALL(*mockPlayerOne, GetPlayerID()).WillByDefault(::testing::Return("nick"));
+    ON_CALL(*mockPlayerTwo, GetPlayerID()).WillByDefault(::testing::Return("mar"));
+
+    vector::game::GameManager gameManager;
+    
+    // Start fails unless all player slots are filled
+    // add mock players to game
+    gameManager.AddPlayer(mockPlayerOne);
+    gameManager.AddPlayer(mockPlayerTwo);
+
+    // game can only start if all players indicate they are ready
+    ON_CALL(*mockPlayerOne, IsReady()).WillByDefault(::testing::Return(true));
+    ON_CALL(*mockPlayerTwo, IsReady()).WillByDefault(::testing::Return(true));
+
+    bool result = gameManager.Start();
+
+    // GameType has not been set, game cannot start
+    EXPECT_FALSE(result);
+}
+
+TEST(TestGameManager, TestStartGameNotEnoughPlayers)
+{
+    // default number of players is 2, create just one mock player
+    auto mockPlayerOne = std::make_shared<::testing::NiceMock<MockPlayer>>();
+
+    ON_CALL(*mockPlayerOne, GetPlayerID()).WillByDefault(::testing::Return("nick"));
+
+    vector::game::GameManager gameManager;
+
+    // game can only start if the GameType is set
+    gameManager.SetGameType(vector::game::GAME_TYPE::DOGFIGHT);
+    
+    // Start fails unless all player slots are filled
+    // add mock players to game
+    gameManager.AddPlayer(mockPlayerOne);
+
+    // game can only start if all players indicate they are ready
+    ON_CALL(*mockPlayerOne, IsReady()).WillByDefault(::testing::Return(true));
+
+    bool result = gameManager.Start();
+
+    // only one player added, game cannot start
+    EXPECT_FALSE(result);
+}
+
+TEST(TestGameManager, TestStartGamePlayersNotReady)
+{
+    // default number of players is 2, create two mock players
+    auto mockPlayerOne = std::make_shared<::testing::NiceMock<MockPlayer>>();
+    auto mockPlayerTwo = std::make_shared<::testing::NiceMock<MockPlayer>>();
+
+    ON_CALL(*mockPlayerOne, GetPlayerID()).WillByDefault(::testing::Return("nick"));
+    ON_CALL(*mockPlayerTwo, GetPlayerID()).WillByDefault(::testing::Return("mar"));
+
+    vector::game::GameManager gameManager;
+
+    // game can only start if the GameType is set
+    gameManager.SetGameType(vector::game::GAME_TYPE::DOGFIGHT);
+    
+    // Start fails unless all player slots are filled
+    // add mock players to game
+    gameManager.AddPlayer(mockPlayerOne);
+    gameManager.AddPlayer(mockPlayerTwo);
+
+    // game can only start if all players indicate they are ready
+    EXPECT_CALL(*mockPlayerOne, IsReady()).WillOnce(::testing::Return(true));
+    // one player is not ready
+    EXPECT_CALL(*mockPlayerTwo, IsReady()).WillOnce(::testing::Return(false));
+
+    bool result = gameManager.Start();
+
+    // player two not ready, game cannot start
+    EXPECT_FALSE(result);
 }
