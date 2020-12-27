@@ -83,6 +83,9 @@ namespace vector
                 {
                     m_GameEnginePtr->AddMover(curMoverPtr);
                 }
+                
+                m_UnitDataSetMap.emplace(std::pair<vector::sim::team_ID, bool>(teamID, true));
+
                 return true;
             }
             return false;
@@ -109,7 +112,7 @@ namespace vector
         // TODO: If unit data has not been set, randomly generate callsigns for units,
         // and create the units based on game type
         bool GameManager::Start()
-        {   
+        {
             if(!m_Started && IsReadyToStart())
             {
                 m_Started = true;
@@ -169,6 +172,21 @@ namespace vector
 
                 std::this_thread::sleep_for(GAME_THREAD_SLEEP_MILLIS);
             }
-        }        
+        } 
+
+        void GameManager::AssignCallsignsAsNeeded()
+        {
+            std::scoped_lock<std::mutex> lock(m_GameSetupMutex);
+
+            for(auto playerItr : m_PlayerMap)
+            {
+                vector::sim::team_ID curTeamID = playerItr.second->GetTeamID();
+
+                if(m_UnitDataSetMap.find(curTeamID) == m_UnitDataSetMap.end())
+                {
+                    
+                }
+            }
+        }       
     } // namespace game
 } // namespace vector

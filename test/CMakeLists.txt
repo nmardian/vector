@@ -13,8 +13,9 @@ target_link_libraries(TestVector
 
 target_sources(TestVector PUBLIC
         main.cpp
-        TestInputParser.cpp
         TestFighterMover.cpp
         TestGameEngine.cpp
         TestGameManager.cpp
+        TestGameSettings.cpp
+        TestInputParser.cpp
 )      

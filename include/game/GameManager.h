@@ -4,6 +4,7 @@
 #include "game/GameTypes.h"
 #include "game/PlayerInterface.h"
 #include "game/GameConstants.h"
+#include "game/GameSettingsInterface.h"
 #include "sim/GameEngine.h"
 
 #include <vector>
@@ -25,9 +26,10 @@ namespace vector
                  * @brief Default construtor
                  * 
                  */
-                GameManager()
+                GameManager(std::unique_ptr<vector::sim::GameEngine> gameEnginePtr, std::unique_ptr<vector::game::GameSettingsInterface> gameSettingsPtr)
+                    : m_GameEnginePtr(std::move(gameEnginePtr))
+                    , m_GameSettingsPtr(std::move(gameSettingsPtr))
                 {
-                    m_GameEnginePtr = std::make_unique<vector::sim::GameEngine>();
                 }
                 
                 /**
@@ -84,8 +86,11 @@ namespace vector
 
                 /**
                  * @brief Determine whether the Game is in a state suitable for starting
+                 * Game has not already started
                  * All Player slots are filled
-                 * All Unit Data is set
+                 * All Players have indicated they are ready
+                 * GameType is selected
+                 * Unit data has been set
                  * 
                  * @return true 
                  * @return false 
@@ -150,14 +155,21 @@ namespace vector
                  */
                 void Run();
 
+                /**
+                 * @brief Randomly generate callsigns for unset units
+                 */
+                void AssignCallsignsAsNeeded();
+
                 vector::game::GAME_TYPE m_GameType{vector::game::GAME_TYPE::UNK};
                 std::unordered_map<std::string, std::shared_ptr<vector::game::PlayerInterface>> m_PlayerMap;
                 uint8_t m_NumPlayerSlots{MIN_NUM_PLAYERS};
                 std::atomic<bool> m_Started{false};
                 std::atomic<bool> m_Ended{false};
+                std::unordered_map<vector::sim::team_ID, bool> m_UnitDataSetMap;
                 mutable std::mutex m_GameSetupMutex;
                 std::unique_ptr<vector::sim::GameEngine> m_GameEnginePtr{nullptr};
                 std::unique_ptr<std::thread> m_GameThreadPtr{nullptr};
+                std::unique_ptr<GameSettingsInterface> m_GameSettingsPtr{nullptr};
 
         }; // class GameManager
     } // namespace game

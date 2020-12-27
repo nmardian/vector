@@ -4,7 +4,9 @@
 #include "game/GameManager.h"
 #include "game/PlayerInterface.h"
 #include "game/GameTypes.h"
+#include "game/GameSettingsInterface.h"
 #include "sim/SimTypes.h"
+#include "sim/GameEngine.h"
 
 #include <vector>
 #include <memory>
@@ -19,9 +21,22 @@ class MockPlayer : public vector::game::PlayerInterface
         MOCK_METHOD(void, RegisterCommandFunction, (std::function<bool (const std::string playerID, const vector::util::Command cmd)>), ());
 }; 
 
+class MockGameSettings : public vector::game::GameSettingsInterface
+{
+    public:
+        MOCK_METHOD(vector::game::GAME_TYPE, GetGameType, (), (const, override));
+        MOCK_METHOD(uint8_t, GetNumPlayers, (), (const, override));
+        MOCK_METHOD(bool, SetNumPlayers, (const uint8_t numPlayers), (override));
+        MOCK_METHOD(uint8_t, GetNumMoversPerSide, (), (const, override));
+        MOCK_METHOD(bool, SetNumMoversPerSide, (uint8_t numMoversPerSide), (override));
+};
+
 TEST(TestGameManager, TestSetPlayerSlotsMin)
 {
-    vector::game::GameManager gameManager;
+    auto gameEnginePtr = std::make_unique<vector::sim::GameEngine>();
+    auto gameSettingsPtr = std::make_unique<MockGameSettings>();
+
+    vector::game::GameManager gameManager(std::move(gameEnginePtr), std::move(gameSettingsPtr));
 
     // set the number of player slots to be one less than the minimun
     bool result = gameManager.SetNumPlayerSlots(vector::game::MIN_NUM_PLAYERS - 1);
@@ -34,7 +49,10 @@ TEST(TestGameManager, TestSetPlayerSlotsMin)
 
 TEST(TestGameManager, TestSetPlayerSlotsMax)
 {
-    vector::game::GameManager gameManager;
+    auto gameEnginePtr = std::make_unique<vector::sim::GameEngine>();
+    auto gameSettingsPtr = std::make_unique<MockGameSettings>();
+
+    vector::game::GameManager gameManager(std::move(gameEnginePtr), std::move(gameSettingsPtr));
 
     // set the number of player slots to be one more than the maximum
     bool result = gameManager.SetNumPlayerSlots(vector::game::MAX_NUM_PLAYERS + 1);
@@ -47,7 +65,10 @@ TEST(TestGameManager, TestSetPlayerSlotsMax)
 
 TEST(TestGameManager, TestSetPlayerSlotsValid)
 {
-    vector::game::GameManager gameManager;
+    auto gameEnginePtr = std::make_unique<vector::sim::GameEngine>();
+    auto gameSettingsPtr = std::make_unique<MockGameSettings>();
+
+    vector::game::GameManager gameManager(std::move(gameEnginePtr), std::move(gameSettingsPtr));
 
     // set the number of player slots to be a valid number
     bool result = gameManager.SetNumPlayerSlots(3);
@@ -63,7 +84,10 @@ TEST(TestGameManager, TestSetPlayerSlotsAfterStartAndStop)
     auto mockPlayerOne = std::make_shared<::testing::NiceMock<MockPlayer>>();
     auto mockPlayerTwo = std::make_shared<::testing::NiceMock<MockPlayer>>();
 
-    vector::game::GameManager gameManager;
+    auto gameEnginePtr = std::make_unique<vector::sim::GameEngine>();
+    auto gameSettingsPtr = std::make_unique<MockGameSettings>();
+
+    vector::game::GameManager gameManager(std::move(gameEnginePtr), std::move(gameSettingsPtr));
 
     ON_CALL(*mockPlayerOne, GetPlayerID()).WillByDefault(::testing::Return("nick"));
     ON_CALL(*mockPlayerTwo, GetPlayerID()).WillByDefault(::testing::Return("mar"));
@@ -148,7 +172,10 @@ TEST(TestGameManager, TestSetupCustom)
     vector::sim::team_ID teamOneID = 1;
     vector::sim::team_ID teamTwoID = 2;
 
-    vector::game::GameManager gameManager;
+    auto gameEnginePtr = std::make_unique<vector::sim::GameEngine>();
+    auto gameSettingsPtr = std::make_unique<MockGameSettings>();
+
+    vector::game::GameManager gameManager(std::move(gameEnginePtr), std::move(gameSettingsPtr));
 
     EXPECT_TRUE(gameManager.SetNumPlayerSlots(2));
 
@@ -184,7 +211,10 @@ TEST(TestGameManager, TestStartGameGood)
     ON_CALL(*mockPlayerOne, GetPlayerID()).WillByDefault(::testing::Return("nick"));
     ON_CALL(*mockPlayerTwo, GetPlayerID()).WillByDefault(::testing::Return("mar"));
 
-    vector::game::GameManager gameManager;
+    auto gameEnginePtr = std::make_unique<vector::sim::GameEngine>();
+    auto gameSettingsPtr = std::make_unique<MockGameSettings>();
+
+    vector::game::GameManager gameManager(std::move(gameEnginePtr), std::move(gameSettingsPtr));
     
     // Start fails unless all player slots are filled
     // add mock players to game
@@ -214,7 +244,10 @@ TEST(TestGameManager, TestStartGameUnkGameType)
     ON_CALL(*mockPlayerOne, GetPlayerID()).WillByDefault(::testing::Return("nick"));
     ON_CALL(*mockPlayerTwo, GetPlayerID()).WillByDefault(::testing::Return("mar"));
 
-    vector::game::GameManager gameManager;
+    auto gameEnginePtr = std::make_unique<vector::sim::GameEngine>();
+    auto gameSettingsPtr = std::make_unique<MockGameSettings>();
+
+    vector::game::GameManager gameManager(std::move(gameEnginePtr), std::move(gameSettingsPtr));
     
     // Start fails unless all player slots are filled
     // add mock players to game
@@ -238,7 +271,10 @@ TEST(TestGameManager, TestStartGameNotEnoughPlayers)
 
     ON_CALL(*mockPlayerOne, GetPlayerID()).WillByDefault(::testing::Return("nick"));
 
-    vector::game::GameManager gameManager;
+    auto gameEnginePtr = std::make_unique<vector::sim::GameEngine>();
+    auto gameSettingsPtr = std::make_unique<MockGameSettings>();
+
+    vector::game::GameManager gameManager(std::move(gameEnginePtr), std::move(gameSettingsPtr));
 
     // game can only start if the GameType is set
     gameManager.SetGameType(vector::game::GAME_TYPE::DOGFIGHT);
@@ -265,7 +301,10 @@ TEST(TestGameManager, TestStartGamePlayersNotReady)
     ON_CALL(*mockPlayerOne, GetPlayerID()).WillByDefault(::testing::Return("nick"));
     ON_CALL(*mockPlayerTwo, GetPlayerID()).WillByDefault(::testing::Return("mar"));
 
-    vector::game::GameManager gameManager;
+    auto gameEnginePtr = std::make_unique<vector::sim::GameEngine>();
+    auto gameSettingsPtr = std::make_unique<MockGameSettings>();
+
+    vector::game::GameManager gameManager(std::move(gameEnginePtr), std::move(gameSettingsPtr));
 
     // game can only start if the GameType is set
     gameManager.SetGameType(vector::game::GAME_TYPE::DOGFIGHT);
