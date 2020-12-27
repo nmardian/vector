@@ -4,6 +4,7 @@
 #include "game/GameManager.h"
 #include "game/PlayerInterface.h"
 #include "game/GameTypes.h"
+#include "sim/SimTypes.h"
 
 #include <vector>
 #include <memory>
@@ -12,7 +13,7 @@ class MockPlayer : public vector::game::PlayerInterface
 {
     public:
         MOCK_METHOD(std::string,  GetPlayerID, (), (const, override));
-        MOCK_METHOD(vector::game::team_ID, GetTeamID, (), (const, override));
+        MOCK_METHOD(vector::sim::team_ID, GetTeamID, (), (const, override));
         MOCK_METHOD(bool, IsReady, (), (const, override));
         MOCK_METHOD(void, UpdateGameState, (const vector::sim::GameState gameState), ());
         MOCK_METHOD(void, RegisterCommandFunction, (std::function<bool (const std::string playerID, const vector::util::Command cmd)>), ());
@@ -100,7 +101,7 @@ TEST(TestGameManager, TestSetPlayerSlotsAfterStartAndStop)
     EXPECT_EQ(vector::game::MIN_NUM_PLAYERS, gameManager.GetNumPlayerSlots());
 }
 
-TEST(TestGameManager, DISABLED_TestSetupCustom)
+TEST(TestGameManager, TestSetupCustom)
 {
     // create a list of custom callsigns
     std::vector<vector::game::UnitData> teamOneData;
@@ -140,29 +141,38 @@ TEST(TestGameManager, DISABLED_TestSetupCustom)
     teamTwoData.push_back(unit);
 
     // create two players
-    std::shared_ptr<MockPlayer> playerOne = std::make_shared<MockPlayer>();
-    std::shared_ptr<MockPlayer> playerTwo = std::make_shared<MockPlayer>();
+    auto mockPlayerOne = std::make_shared<::testing::NiceMock<MockPlayer>>();
+    auto mockPlayerTwo = std::make_shared<::testing::NiceMock<MockPlayer>>();
+
+    // team IDs
+    vector::sim::team_ID teamOneID = 1;
+    vector::sim::team_ID teamTwoID = 2;
 
     vector::game::GameManager gameManager;
 
-    gameManager.SetNumPlayerSlots(2);
+    EXPECT_TRUE(gameManager.SetNumPlayerSlots(2));
 
-    EXPECT_EQ(2, gameManager.GetNumPlayerSlots());
+    // game can only start if the GameType is set
+    EXPECT_TRUE(gameManager.SetGameType(vector::game::GAME_TYPE::DOGFIGHT));
 
-    // set the GameType to DogFight
-    gameManager.SetGameType(vector::game::GAME_TYPE::DOGFIGHT);
+    ON_CALL(*mockPlayerOne, GetPlayerID()).WillByDefault(::testing::Return("nick"));
+    ON_CALL(*mockPlayerTwo, GetPlayerID()).WillByDefault(::testing::Return("mar"));
 
     // add the two players
-    gameManager.AddPlayer(playerOne);
-    gameManager.AddPlayer(playerTwo);
+    EXPECT_TRUE(gameManager.AddPlayer(mockPlayerOne));
+    EXPECT_TRUE(gameManager.AddPlayer(mockPlayerTwo));
+
+    // game can only start if all players indicate they are ready
+    ON_CALL(*mockPlayerOne, IsReady()).WillByDefault(::testing::Return(true));
+    ON_CALL(*mockPlayerTwo, IsReady()).WillByDefault(::testing::Return(true));
 
     // set the UnitData
-    gameManager.SetUnitData(playerOne->GetTeamID(), teamOneData);
-    gameManager.SetUnitData(playerTwo->GetTeamID(), teamTwoData);
+    EXPECT_TRUE(gameManager.SetUnitData(teamOneID, teamOneData));
+    EXPECT_TRUE(gameManager.SetUnitData(teamTwoID, teamTwoData));
 
-    bool result = gameManager.Start();
+    EXPECT_TRUE(gameManager.Start());
 
-    EXPECT_TRUE(result);
+    EXPECT_TRUE(gameManager.Stop());
 }
 
 TEST(TestGameManager, TestStartGameGood)

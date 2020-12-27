@@ -10,7 +10,7 @@ namespace vector
 {
     namespace sim
     {
-        class FighterMover : MoverInterface
+        class FighterMover : public MoverInterface
         {
             public:
                 
@@ -23,7 +23,7 @@ namespace vector
                  * @param teamID            The ID of the team this Mover belongs to
                  * @param performanceValues Performance characteristics of this FighterMover
                  */
-                FighterMover(const std::string& ID, const uint8_t teamID, MoverParams performanceValues);
+                FighterMover(const std::string& ID, const vector::sim::team_ID teamID, MoverParams performanceValues);
 
                 /**
                  * @brief Default Destructor
@@ -88,7 +88,7 @@ namespace vector
                  * 
                  * @return this Mover's team ID
                  */
-                vector::game::team_ID GetTeam() const override;
+                vector::sim::team_ID GetTeam() const override;
 
                 /**
                  * @brief Get a string representation of this Mover
@@ -108,7 +108,7 @@ namespace vector
                 angle m_DesiredHeading;
                 std::string m_ID;
                 bool m_Status{true};
-                vector::game::team_ID m_TeamID{UNK_TEAM_ID};
+                vector::sim::team_ID m_TeamID{UNK_TEAM_ID};
         };
     }
 }

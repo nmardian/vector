@@ -74,7 +74,7 @@ namespace vector
                  * 
                  * @return this Mover's team ID
                  */
-                virtual vector::game::team_ID GetTeam() const = 0;
+                virtual vector::sim::team_ID GetTeam() const = 0;
 
                 /**
                  * @brief Get a string representation of this Mover

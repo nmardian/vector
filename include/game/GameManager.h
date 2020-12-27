@@ -25,7 +25,10 @@ namespace vector
                  * @brief Default construtor
                  * 
                  */
-                GameManager() = default;
+                GameManager()
+                {
+                    m_GameEnginePtr = std::make_unique<vector::sim::GameEngine>();
+                }
                 
                 /**
                  * @brief Default destructor
@@ -77,7 +80,7 @@ namespace vector
                  * @return true if the UnitData is successfully set
                  * @return false if the UnitData could not be set
                  */
-                bool SetUnitData(const vector::game::team_ID teamID, const std::vector<vector::game::UnitData> unitData);
+                bool SetUnitData(const vector::sim::team_ID teamID, const std::vector<vector::game::UnitData> unitData);
 
                 /**
                  * @brief Determine whether the Game is in a state suitable for starting
@@ -154,7 +157,7 @@ namespace vector
                 std::atomic<bool> m_Ended{false};
                 mutable std::mutex m_GameSetupMutex;
                 std::unique_ptr<vector::sim::GameEngine> m_GameEnginePtr{nullptr};
-                std::unique_ptr<std::thread> m_GameThreadPtr;
+                std::unique_ptr<std::thread> m_GameThreadPtr{nullptr};
 
         }; // class GameManager
     } // namespace game

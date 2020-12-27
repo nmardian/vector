@@ -1,15 +1,12 @@
 #ifndef GAME_TYPES_H
 #define GAME_TYPES_H
 
-#include <stdint.h>
 #include <string>
 
 namespace vector
 {
     namespace game
     {
-        typedef uint8_t team_ID;
-
         enum class GAME_TYPE
         {
             UNK,

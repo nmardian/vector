@@ -110,7 +110,7 @@ namespace vector
             return m_Status;
         }
 
-        vector::game::team_ID FighterMover::GetTeam() const
+        vector::sim::team_ID FighterMover::GetTeam() const
         {
             return m_TeamID;
         }

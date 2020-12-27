@@ -1,5 +1,8 @@
 #include "game/GameManager.h"
 
+#include "sim/MoverInterface.h"
+#include "sim/FighterMover.h"
+#include "sim/SimParams.h"
 
 namespace vector
 {
@@ -48,11 +51,38 @@ namespace vector
             return false;
         }
 
-        bool GameManager::SetUnitData(const vector::game::team_ID teamID, const std::vector<vector::game::UnitData> unitData)
+        bool GameManager::SetUnitData(const vector::sim::team_ID teamID, const std::vector<vector::game::UnitData> unitData)
         {
             std::scoped_lock<std::mutex> lock(m_GameSetupMutex);
+
             if(!m_Started)
             {
+                vector::sim::MoverParams fighterParams;
+                fighterParams.maxSpeed = vector::sim::FIGHTER_SPEED_MAX;
+                fighterParams.turnRate = vector::sim::FIGHTER_TURN_RATE;
+
+                std::vector<std::shared_ptr<vector::sim::MoverInterface>> allMovers;
+
+                for(auto curUnit : unitData)
+                {
+                    switch(curUnit.unitType)
+                    {
+                        case vector::game::UNIT_TYPE::FIGHTER:
+                        {
+                            std::shared_ptr<vector::sim::FighterMover> fighterPtr = std::make_shared<vector::sim::FighterMover>(curUnit.callsign, teamID, fighterParams);
+                            allMovers.push_back(fighterPtr);
+                            break;
+                        }
+                        case vector::game::UNIT_TYPE::UNK:
+                        default:
+                            return false;
+                    }
+                }
+
+                for(auto curMoverPtr : allMovers)
+                {
+                    m_GameEnginePtr->AddMover(curMoverPtr);
+                }
                 return true;
             }
             return false;
@@ -76,6 +106,8 @@ namespace vector
             return false;
         }
 
+        // TODO: If unit data has not been set, randomly generate callsigns for units,
+        // and create the units based on game type
         bool GameManager::Start()
         {   
             if(!m_Started && IsReadyToStart())

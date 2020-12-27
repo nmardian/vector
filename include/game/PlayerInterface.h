@@ -3,6 +3,7 @@
 
 #include "game/GameTypes.h"
 #include "sim/GameState.h"
+#include "sim/SimTypes.h"
 #include "util/Command.h"
 
 #include <functional>
@@ -28,7 +29,7 @@ namespace vector
                  * 
                  * @return the ID of this Player's team 
                  */
-                virtual vector::game::team_ID GetTeamID() const  = 0;
+                virtual vector::sim::team_ID GetTeamID() const  = 0;
 
                 /**
                  * @brief Is the Player ready to begin the Game
