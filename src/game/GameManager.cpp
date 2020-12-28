@@ -184,7 +184,10 @@ namespace vector
 
                 if(m_UnitDataSetMap.find(curTeamID) == m_UnitDataSetMap.end())
                 {
-                    
+                    for(int i = 0; i < m_GameSettingsPtr->GetNumMoversPerSide(); ++i)
+                    {
+                        
+                    }
                 }
             }
         }       

@@ -13,6 +13,7 @@ target_link_libraries(TestVector
 
 target_sources(TestVector PUBLIC
         main.cpp
+        TestCallsignGenerator.cpp
         TestFighterMover.cpp
         TestGameEngine.cpp
         TestGameManager.cpp
