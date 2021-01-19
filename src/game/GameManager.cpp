@@ -19,6 +19,11 @@ namespace vector
             return false;
         }
 
+        vector::game::GAME_TYPE GameManager::GetGameType()
+        {
+            return m_GameType;
+        }
+
         bool GameManager::SetNumPlayerSlots(const uint8_t numPlayerSlots)
         {
             std::scoped_lock<std::mutex> lock(m_GameSetupMutex);
@@ -172,24 +177,6 @@ namespace vector
 
                 std::this_thread::sleep_for(GAME_THREAD_SLEEP_MILLIS);
             }
-        } 
-
-        void GameManager::AssignCallsignsAsNeeded()
-        {
-            std::scoped_lock<std::mutex> lock(m_GameSetupMutex);
-
-            for(auto playerItr : m_PlayerMap)
-            {
-                vector::sim::team_ID curTeamID = playerItr.second->GetTeamID();
-
-                if(m_UnitDataSetMap.find(curTeamID) == m_UnitDataSetMap.end())
-                {
-                    for(int i = 0; i < m_GameSettingsPtr->GetNumMoversPerSide(); ++i)
-                    {
-                        
-                    }
-                }
-            }
-        }       
+        }        
     } // namespace game
 } // namespace vector

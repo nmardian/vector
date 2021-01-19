@@ -48,6 +48,13 @@ namespace vector
                 bool SetGameType(const vector::game::GAME_TYPE gameType);
 
                 /**
+                 * @brief Get the GameType of this Game
+                 * 
+                 * @return vector::game::GAME_TYPE GameType of this game
+                 */
+                vector::game::GAME_TYPE GetGameType();
+
+                /**
                  * @brief Set the number of Player slots in the Game
                  * 
                  * @param numPlayers The number of Player slots in the Game

@@ -31,6 +31,23 @@ class MockGameSettings : public vector::game::GameSettingsInterface
         MOCK_METHOD(bool, SetNumMoversPerSide, (uint8_t numMoversPerSide), (override));
 };
 
+TEST(TestGameManager, TestSetGameType)
+{
+    auto gameEnginePtr = std::make_unique<vector::sim::GameEngine>();
+    auto gameSettingsPtr = std::make_unique<MockGameSettings>();
+
+    vector::game::GameManager gameManager(std::move(gameEnginePtr), std::move(gameSettingsPtr));
+
+    // default GameType is UNK
+    EXPECT_EQ(vector::game::GAME_TYPE::UNK, gameManager.GetGameType());
+
+    // set GameType to DogFight
+    EXPECT_TRUE(gameManager.SetGameType(vector::game::GAME_TYPE::DOGFIGHT));
+
+    // verify GameType has been set to DogFight
+    EXPECT_EQ(vector::game::GAME_TYPE::DOGFIGHT, gameManager.GetGameType());
+}
+
 TEST(TestGameManager, TestSetPlayerSlotsMin)
 {
     auto gameEnginePtr = std::make_unique<vector::sim::GameEngine>();
