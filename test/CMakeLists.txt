@@ -16,6 +16,7 @@ target_sources(TestVector PUBLIC
         TestCallsignGenerator.cpp
         TestFighterMover.cpp
         TestGameEngine.cpp
+        TestGameLobby.cpp
         TestGameManager.cpp
         TestGameSettings.cpp
         TestInputParser.cpp

@@ -40,9 +40,16 @@ namespace vector
                 virtual bool IsReady() const = 0;
 
                 /**
+                 * @brief Update the locally held lobby state, to the pushed to the client connection
+                 * 
+                 * @param lobbyState the current locally held lobby state
+                 */
+                virtual void UpdateLobbyState(const vector::game::LobbyState lobbyState) = 0;
+
+                /**
                  * @brief Update the locally held GameState, to be pushed to the client connection
                  * 
-                 * @param gameState the current locall held game state
+                 * @param gameState the current locally held game state
                  */
                 virtual void UpdateGameState(const vector::sim::GameState gameState) = 0;
 

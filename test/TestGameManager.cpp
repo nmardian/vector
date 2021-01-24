@@ -17,6 +17,7 @@ class MockPlayer : public vector::game::PlayerInterface
         MOCK_METHOD(std::string,  GetPlayerID, (), (const, override));
         MOCK_METHOD(vector::sim::team_ID, GetTeamID, (), (const, override));
         MOCK_METHOD(bool, IsReady, (), (const, override));
+        MOCK_METHOD(void, UpdateLobbyState, (const vector::game::LobbyState lobbyState), (override));
         MOCK_METHOD(void, UpdateGameState, (const vector::sim::GameState gameState), ());
         MOCK_METHOD(void, RegisterCommandFunction, (std::function<bool (const std::string playerID, const vector::util::Command cmd)>), ());
 }; 
